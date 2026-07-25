@@ -1,0 +1,21 @@
+[tool.ruff]
+line-length = 110
+target-version = "py313"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "B", "SIM", "BLE"]
+ignore = [
+    "B008",  # FastAPI's Depends(...) as a default argument is the intended idiom
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["BLE001"]
+
+[tool.mypy]
+python_version = "3.13"
+ignore_missing_imports = true
+disallow_untyped_defs = true
+warn_unused_ignores = true
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
