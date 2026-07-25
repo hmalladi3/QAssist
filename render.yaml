@@ -1,0 +1,26 @@
+services:
+  - type: web
+    name: qassist-api
+    runtime: python
+    rootDir: backend
+    plan: free
+    region: oregon
+    buildCommand: pip install -r requirements.txt
+    startCommand: uvicorn app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: ENVIRONMENT
+        value: production
+      - key: DATABASE_URL
+        sync: false
+      - key: AWS_ACCESS_KEY_ID
+        sync: false
+      - key: AWS_SECRET_ACCESS_KEY
+        sync: false
+      - key: AWS_REGION
+        value: us-east-1
+      - key: BEDROCK_CLAUDE_MODEL_ID
+        value: anthropic.claude-3-5-haiku-20241022-v1:0
+      - key: BEDROCK_EMBED_MODEL_ID
+        value: amazon.titan-embed-text-v2:0
+      - key: FRONTEND_ORIGIN
+        sync: false
