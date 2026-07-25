@@ -47,7 +47,7 @@ Render's free tier sleeps a web service after ~15 minutes of inactivity, causing
 
 GitHub Actions workflow on every push/PR:
 1. Backend: install deps, run `ruff`/`mypy` (lint/type-check), run `pytest`.
-2. Frontend: install deps, run `eslint`, run `vitest`, run `tsc --noEmit`.
+2. Frontend: install deps, run `oxlint` (the lint tool Vite's current React+TS template scaffolds by default), run `vitest`, run `tsc -b` for type-checking.
 
 CI does not deploy — Render and Vercel both deploy automatically from their own GitHub integration on push to `main`; CI's job is solely to keep `main` green.
 
