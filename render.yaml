@@ -19,7 +19,10 @@ services:
       - key: AWS_REGION
         value: us-east-1
       - key: BEDROCK_CLAUDE_MODEL_ID
-        value: us.anthropic.claude-haiku-4-5-20251001-v1:0
+        # Temporarily Nova Micro: Claude needs a one-time Bedrock marketplace
+        # "use case details" form submitted first. Swap back to
+        # us.anthropic.claude-haiku-4-5-20251001-v1:0 once that's done.
+        value: amazon.nova-micro-v1:0
       - key: BEDROCK_EMBED_MODEL_ID
         value: amazon.titan-embed-text-v2:0
       - key: FRONTEND_ORIGIN
