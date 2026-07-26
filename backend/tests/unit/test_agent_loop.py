@@ -107,13 +107,16 @@ def test_ask_supports_multiple_sequential_tool_calls_within_round_bound():
     assert len(converse.calls) == 3
 
 
-def test_ask_bounds_tool_use_loop_to_max_rounds_and_forces_final_answer():
-    # Claude tries to call a tool every round; the final round is offered no
-    # tools, so it is forced to answer with whatever context it already has.
+def test_ask_bounds_tool_use_loop_and_does_not_execute_a_tool_call_on_the_final_round():
+    # Bedrock's Converse API requires toolConfig on every call once the
+    # message history contains tool blocks, so tools stay offered through
+    # the last round too — but if the model still asks for a tool there,
+    # the loop must not execute it, only use whatever text (if any) came
+    # back, per AGT-LOOP-003.
     responses = [
         tool_use_result("t1", "search_documents", {"query": "q"}),
         tool_use_result("t2", "search_documents", {"query": "q"}),
-        text_result("forced final answer"),  # 3rd call: tools=[] on the last round
+        tool_use_result("t3", "search_documents", {"query": "q"}),  # still wants to search
     ]
     converse = ScriptedConverseClient(responses=responses)
     retrieval = FakeRetrievalService(chunks_by_query={"q": [CHUNK]})
@@ -122,16 +125,16 @@ def test_ask_bounds_tool_use_loop_to_max_rounds_and_forces_final_answer():
     result = loop.ask("a question that never converges")
 
     assert len(converse.calls) == 3
-    assert converse.calls[-1]["tools"] == []
-    assert result.answer == "forced final answer"
+    assert all(call["tools"] for call in converse.calls)  # never omitted, incl. last round
+    assert len(result.trace) == 2  # only the first two tool calls were actually executed
+    assert "allotted" in result.answer  # fallback text, since no answer text was returned
 
 
-def test_ask_offers_search_and_list_tools_on_every_non_final_round():
+def test_ask_always_offers_tools_including_on_the_only_round():
     converse = ScriptedConverseClient(responses=[text_result("answer")])
     retrieval = FakeRetrievalService()
     loop = AgentLoop(converse, retrieval, max_rounds=1)
 
     loop.ask("question")
 
-    # max_rounds=1 means round 0 IS the final round: no tools offered.
-    assert converse.calls[0]["tools"] == []
+    assert converse.calls[0]["tools"]

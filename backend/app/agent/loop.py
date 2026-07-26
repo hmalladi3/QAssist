@@ -52,13 +52,25 @@ class AgentLoop:
 
         for round_index in range(self._max_rounds):
             is_last_round = round_index == self._max_rounds - 1
-            tools = [] if is_last_round else TOOL_SPECS
 
-            result = self._converse_client.converse(messages=messages, system=SYSTEM_PROMPT, tools=tools)
+            # Bedrock's Converse API requires toolConfig on every call once
+            # the message history contains toolUse/toolResult blocks — it
+            # cannot be omitted to signal "no more tool calls allowed," so
+            # tools are always offered. The round budget (AGT-LOOP-002) is
+            # instead enforced below: on the last round, a tool_use response
+            # is not executed, forcing a final answer per AGT-LOOP-003.
+            result = self._converse_client.converse(messages=messages, system=SYSTEM_PROMPT, tools=TOOL_SPECS)
             messages.append(result.raw_assistant_message)
 
             if result.stop_reason != "tool_use":
                 return self._finalize(result.text or "", known_chunks, trace)
+
+            if is_last_round:
+                fallback_text = (
+                    result.text
+                    or "I wasn't able to fully answer within the allotted number of searches."
+                )
+                return self._finalize(fallback_text, known_chunks, trace)
 
             tool_result_content = []
             for tool_use in result.tool_uses:
@@ -78,8 +90,9 @@ class AgentLoop:
                 )
             messages.append({"role": "user", "content": tool_result_content})
 
-        # Unreachable in practice: the final round always offers tools=[],
-        # which guarantees stop_reason != "tool_use" and an early return above.
+        # Unreachable: every iteration returns above, either on a non-tool_use
+        # stop_reason or on is_last_round. Satisfies type-checking / defensive
+        # completeness only.
         return self._finalize("", known_chunks, trace)
 
     def _execute_tool(
