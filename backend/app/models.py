@@ -43,3 +43,5 @@ class HealthResponse(BaseModel):
     status: str
     db: bool
     bedrock_configured: bool
+    bedrock_claude_model_id: str
+    bedrock_embed_model_id: str
