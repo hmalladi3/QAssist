@@ -20,8 +20,15 @@ logger = logging.getLogger(__name__)
 
 def resolve_cors_origins(settings: Settings) -> list[str]:
     """@spec API-CORS-001 — production allows only the deployed frontend
-    origin; development additionally allows the local Vite dev server."""
-    origins = [settings.frontend_origin]
+    origin; development additionally allows the local Vite dev server.
+
+    Strips a trailing slash from the configured origin: browsers never send
+    one in the Origin header (it's scheme+host+port only), but it's an easy
+    copy-paste mistake to include one when setting the env var from an
+    address bar — without normalizing, that mismatch silently fails CORS
+    with no indication why.
+    """
+    origins = [settings.frontend_origin.rstrip("/")]
     if not settings.is_production:
         origins.append("http://localhost:5173")
     return origins
