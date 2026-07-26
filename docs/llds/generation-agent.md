@@ -8,7 +8,7 @@ This is the component that turns QAssist from "a RAG pipeline" into "an agent." 
 
 A thin wrapper around `boto3`'s `bedrock-runtime` `converse` API (chosen over the older `invoke_model` because `converse` has first-class, provider-agnostic tool-use support, which is exactly what this component needs).
 
-- **Model**: Claude Haiku (Bedrock model ID configured via env var, e.g. `anthropic.claude-3-5-haiku-...`) — see [Deployment & Infra](deployment-infra.md) for the exact model ID and region.
+- **Model**: Claude Haiku, invoked via a cross-region inference profile ID configured via env var (e.g. `us.anthropic.claude-haiku-4-5-...`, not a bare model ID) — see [Deployment & Infra](deployment-infra.md) for the exact ID, region, and why a profile is required.
 - **Embeddings**: Amazon Titan Embed Text v2 (`amazon.titan-embed-text-v2:0`), invoked via `invoke_model` (Titan embeddings are not part of the `converse` tool-use flow).
 - Both calls are wrapped with timeout + retry (transient throttling) and raise a typed `BedrockError` on exhaustion, which the API layer translates into a client-facing error response (see [API Backend](api-backend.md)).
 

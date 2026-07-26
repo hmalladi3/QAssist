@@ -4,7 +4,14 @@
 import re
 from dataclasses import dataclass
 
-_CITATION_MARKER_RE = re.compile(r"\[chunk:([0-9a-fA-F-]+)\]")
+_UUID = r"[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}"
+# Accepts both the prompted [chunk:<uuid>] form and a bare [<uuid>] form —
+# not every Bedrock model follows the "chunk:" prefix instruction reliably
+# (observed with Nova Micro), and the UUID shape is specific enough that
+# accepting the bare form doesn't risk matching incidental bracketed text.
+# Safety doesn't depend on this pattern anyway: resolve_citations() below
+# still drops anything not present in known_chunks regardless of format.
+_CITATION_MARKER_RE = re.compile(rf"\[(?:chunk:)?({_UUID})\]")
 _EXCERPT_MAX_LEN = 200
 
 

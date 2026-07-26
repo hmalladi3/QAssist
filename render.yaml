@@ -19,7 +19,7 @@ services:
       - key: AWS_REGION
         value: us-east-1
       - key: BEDROCK_CLAUDE_MODEL_ID
-        value: anthropic.claude-3-5-haiku-20241022-v1:0
+        value: us.anthropic.claude-haiku-4-5-20251001-v1:0
       - key: BEDROCK_EMBED_MODEL_ID
         value: amazon.titan-embed-text-v2:0
       - key: FRONTEND_ORIGIN

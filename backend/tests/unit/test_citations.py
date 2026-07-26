@@ -75,6 +75,27 @@ def test_resolve_citations_drops_marker_for_unknown_chunk_id_and_never_renders_i
     assert result.dropped_chunk_ids == [fabricated_id]
 
 
+def test_resolve_citations_accepts_bare_uuid_bracket_form():
+    # Not every Bedrock model follows the "[chunk:<id>]" prefix instruction
+    # reliably (observed with Amazon Nova Micro in production) — a bare
+    # [<uuid>] must still resolve correctly.
+    text = f"The notice period is 30 days [{CHUNK_A.chunk_id}]."
+    result = resolve_citations(text, {CHUNK_A.chunk_id: CHUNK_A})
+
+    assert result.text == "The notice period is 30 days [1]."
+    assert len(result.citations) == 1
+    assert result.citations[0].chunk_id == CHUNK_A.chunk_id
+
+
+def test_resolve_citations_drops_bare_bracket_that_is_not_a_known_chunk_uuid():
+    fabricated_id = "ffffffff-0000-0000-0000-000000000000"
+    text = f"Fabricated claim [{fabricated_id}]."
+    result = resolve_citations(text, {})
+
+    assert "[" not in result.text
+    assert result.dropped_chunk_ids == [fabricated_id]
+
+
 def test_resolve_citations_mixes_known_and_unknown_markers():
     fabricated_id = "ffffffff-0000-0000-0000-000000000000"
     text = f"Real [chunk:{CHUNK_A.chunk_id}]. Fake [chunk:{fabricated_id}]."

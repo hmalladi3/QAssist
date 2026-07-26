@@ -17,7 +17,7 @@ class Settings(BaseSettings):
     aws_access_key_id: str | None = None
     aws_secret_access_key: str | None = None
 
-    bedrock_claude_model_id: str = "anthropic.claude-3-5-haiku-20241022-v1:0"
+    bedrock_claude_model_id: str = "us.anthropic.claude-haiku-4-5-20251001-v1:0"
     bedrock_embed_model_id: str = "amazon.titan-embed-text-v2:0"
     bedrock_embed_dimension: int = 1024
 
