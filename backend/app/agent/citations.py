@@ -12,7 +12,12 @@ _UUID = r"[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F
 # Safety doesn't depend on this pattern anyway: resolve_citations() below
 # still drops anything not present in known_chunks regardless of format.
 _CITATION_MARKER_RE = re.compile(rf"\[(?:chunk:)?({_UUID})\]")
-_EXCERPT_MAX_LEN = 200
+# Matches the default chunk size (see app.config.Settings.chunk_size_chars) so
+# the excerpt shown is normally the *whole* chunk, not a prefix of it — a
+# truncated excerpt can (and did) cut off before reaching the sentence a
+# citation actually points to, even though the full chunk genuinely supports
+# it. Showing the whole chunk keeps citations visibly checkable.
+_EXCERPT_MAX_LEN = 500
 
 
 @dataclass(frozen=True)

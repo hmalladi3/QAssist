@@ -13,7 +13,7 @@ CHUNK_B = ChunkRef(
     chunk_id="bbbbbbbb-0000-0000-0000-000000000000",
     filename="report.pdf",
     page_number=1,
-    content="x" * 300,  # long enough to require truncation
+    content="x" * 600,  # longer than a chunk should ever be, to exercise truncation
 )
 
 
@@ -60,7 +60,7 @@ def test_resolve_citations_reuses_footnote_number_for_repeated_chunk():
 
 def test_resolve_citations_truncates_long_excerpts():
     result = resolve_citations(f"[chunk:{CHUNK_B.chunk_id}]", {CHUNK_B.chunk_id: CHUNK_B})
-    assert len(result.citations[0].excerpt) <= 200
+    assert len(result.citations[0].excerpt) <= 500
     assert result.citations[0].excerpt.endswith("…")
 
 
