@@ -5,12 +5,19 @@ import type { DocumentSummary, Turn } from './api/types'
 import { AskInput } from './components/AskInput'
 import { ChatThread } from './components/ChatThread'
 import { DocumentPanel } from './components/DocumentPanel'
+import { ExampleQuestions } from './components/ExampleQuestions'
+
+const EXAMPLE_QUESTIONS = [
+  "What's the refund policy if I cancel my subscription?",
+  'What documents do you have, and what notice do I need to give to terminate the vendor agreement?',
+  'If I cancel my contract, when do I get refunded and when is my data deleted?',
+]
 
 function errorMessage(err: unknown, fallback: string): string {
   return err instanceof Error ? err.message : fallback
 }
 
-/** @spec UI-DOC-001, UI-ASK-001, UI-ANS-001, UI-TRACE-001, UI-ERR-001 */
+/** @spec UI-DOC-001, UI-DOC-002, UI-ASK-001, UI-ANS-001, UI-TRACE-001, UI-ERR-001, UI-EXAMPLES-001 */
 function App() {
   const [documents, setDocuments] = useState<DocumentSummary[]>([])
   const [uploading, setUploading] = useState(false)
@@ -30,17 +37,22 @@ function App() {
     void refreshDocuments()
   }, [refreshDocuments])
 
-  async function handleUpload(file: File) {
+  async function handleUpload(files: File[]) {
     setUploading(true)
     setBanner(null)
-    try {
-      await uploadDocument(file)
-      await refreshDocuments()
-    } catch (err) {
-      setBanner(errorMessage(err, 'Upload failed'))
-    } finally {
-      setUploading(false)
+    const failures: string[] = []
+    for (const file of files) {
+      try {
+        await uploadDocument(file)
+      } catch (err) {
+        failures.push(`${file.name}: ${errorMessage(err, 'upload failed')}`)
+      }
     }
+    await refreshDocuments()
+    if (failures.length > 0) {
+      setBanner(failures.join('; '))
+    }
+    setUploading(false)
   }
 
   async function handleAsk(question: string) {
@@ -82,6 +94,9 @@ function App() {
         <DocumentPanel documents={documents} uploading={uploading} onUpload={handleUpload} />
         <main className="app__main">
           <ChatThread turns={turns} />
+          {turns.length === 0 && (
+            <ExampleQuestions questions={EXAMPLE_QUESTIONS} disabled={asking} onSelect={handleAsk} />
+          )}
           <AskInput disabled={asking} onAsk={handleAsk} />
           {banner && (
             <div className="app__banner" role="alert">

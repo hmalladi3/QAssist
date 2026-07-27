@@ -17,4 +17,8 @@ question, say so explicitly rather than guessing.
 
 If your first search doesn't fully answer the question, prefer calling \
 search_documents again with a refined query over answering with weak or \
-incomplete context."""
+incomplete context.
+
+Respond with the answer directly. Do not include a <thinking> block, chain-\
+of-thought, or any other meta-commentary about your reasoning process —
+only the final answer itself."""

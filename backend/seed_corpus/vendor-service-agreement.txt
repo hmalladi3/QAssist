@@ -1,0 +1,43 @@
+VENDOR SERVICE AGREEMENT
+Acme Analytics Platform — Standard Terms
+
+1. TERM AND TERMINATION
+
+This Agreement begins on the Effective Date and continues until terminated
+as provided herein. Either party may terminate this Agreement for
+convenience upon 45 days' prior written notice to the other party. Either
+party may terminate this Agreement immediately upon written notice if the
+other party commits a material breach that remains uncured 15 days after
+receiving written notice describing the breach.
+
+2. FEES AND PAYMENT
+
+Subscription fees are invoiced monthly in advance and are due within 30
+days of the invoice date. Late payments accrue interest at 1.5% per month
+or the maximum rate permitted by law, whichever is lower.
+
+3. REFUNDS
+
+Refunds for prepaid, unused subscription fees will be issued within 10
+business days of the effective termination date, prorated to the nearest
+full month remaining on the prepaid term. Fees for services already
+rendered, including partial months of usage, are non-refundable.
+
+4. CONFIDENTIALITY
+
+Each party agrees to protect the other party's confidential information
+using at least the same degree of care it uses to protect its own
+confidential information, and in no event less than reasonable care.
+Confidentiality obligations survive termination of this Agreement for a
+period of 3 years.
+
+5. LIMITATION OF LIABILITY
+
+Except for breaches of the confidentiality section, neither party's total
+liability arising out of this Agreement will exceed the fees paid by
+Customer in the 12 months preceding the claim.
+
+6. GOVERNING LAW
+
+This Agreement is governed by the laws of the State of Delaware, without
+regard to its conflict of laws principles.

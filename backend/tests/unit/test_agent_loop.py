@@ -1,5 +1,5 @@
 """
-@spec AGT-LOOP-001, AGT-LOOP-002, AGT-LOOP-003, AGT-TOOL-001, AGT-TRACE-001
+@spec AGT-LOOP-001, AGT-LOOP-002, AGT-LOOP-003, AGT-TOOL-001, AGT-TRACE-001, AGT-CLEAN-001
 """
 from app.agent.loop import AgentLoop
 from app.ingestion.repository import RetrievedChunk
@@ -138,3 +138,18 @@ def test_ask_always_offers_tools_including_on_the_only_round():
     loop.ask("question")
 
     assert converse.calls[0]["tools"]
+
+
+def test_ask_strips_a_leaked_thinking_block_from_the_answer():
+    # Observed with Amazon Nova Micro in production: it sometimes emits its
+    # internal reasoning as a literal <thinking>...</thinking> block ahead
+    # of the actual answer. That must never reach the client.
+    raw = "<thinking>the user wants X, I should say Y</thinking>\n\nThe answer is Y."
+    converse = ScriptedConverseClient(responses=[text_result(raw)])
+    retrieval = FakeRetrievalService()
+    loop = AgentLoop(converse, retrieval, max_rounds=4)
+
+    result = loop.ask("question")
+
+    assert result.answer == "The answer is Y."
+    assert "thinking" not in result.answer.lower()

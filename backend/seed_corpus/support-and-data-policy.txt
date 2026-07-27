@@ -1,0 +1,39 @@
+SUPPORT AND DATA HANDLING POLICY
+Acme Analytics Platform
+
+1. SUPPORT HOURS AND RESPONSE TIMES
+
+Standard support requests submitted through the help portal receive an
+initial response within 4 business hours during weekday business hours
+(9am-6pm ET, Monday through Friday, excluding holidays). Critical
+production-down issues reported through the emergency escalation line are
+addressed within 30 minutes, 24 hours a day, 7 days a week.
+
+2. DATA RETENTION
+
+Customer data uploaded to the platform is retained for 90 days following
+the customer's last active session. After that 90-day window, data is
+automatically deleted from all production systems. Backups containing
+that data are rotated out and permanently purged within an additional 30
+days, meaning no copy of the data exists anywhere after 120 days of
+inactivity.
+
+3. DATA EXPORT
+
+Customers may request a full export of their data at any time prior to
+deletion by submitting a request through the help portal. Exports are
+delivered as a downloadable archive within 5 business days of the
+request.
+
+4. SECURITY INCIDENT NOTIFICATION
+
+In the event of a confirmed security incident affecting customer data,
+affected customers will be notified by email within 72 hours of
+confirmation, including a description of the incident, the data
+involved, and remediation steps taken.
+
+5. ACCEPTABLE USE
+
+Customers may not use the platform to store or process data that violates
+applicable law, infringes third-party intellectual property rights, or
+contains malicious code.

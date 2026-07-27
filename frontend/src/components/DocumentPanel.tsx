@@ -5,16 +5,16 @@ import type { DocumentSummary } from '../api/types'
 interface DocumentPanelProps {
   documents: DocumentSummary[]
   uploading: boolean
-  onUpload: (file: File) => void
+  onUpload: (files: File[]) => void
 }
 
-/** @spec UI-DOC-001 */
+/** @spec UI-DOC-001, UI-DOC-002 */
 export function DocumentPanel({ documents, uploading, onUpload }: DocumentPanelProps) {
   const inputRef = useRef<HTMLInputElement>(null)
 
   function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
-    const file = event.target.files?.[0]
-    if (file) onUpload(file)
+    const files = Array.from(event.target.files ?? [])
+    if (files.length > 0) onUpload(files)
     event.target.value = ''
   }
 
@@ -27,13 +27,14 @@ export function DocumentPanel({ documents, uploading, onUpload }: DocumentPanelP
           className="document-panel__upload-button"
           onClick={() => inputRef.current?.click()}
           disabled={uploading}
-          aria-label="Upload document"
+          aria-label="Upload documents"
         >
           {uploading ? '…' : '+'}
         </button>
         <input
           ref={inputRef}
           type="file"
+          multiple
           accept=".pdf,.txt,.md,application/pdf,text/plain,text/markdown"
           onChange={handleFileChange}
           hidden

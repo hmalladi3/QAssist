@@ -43,7 +43,7 @@ export function AnswerBubble({ turn }: AnswerBubbleProps) {
           </div>
 
           {turn.trace && turn.trace.length > 0 && (
-            <details className="turn__trace">
+            <details className="turn__trace" open>
               <summary>
                 Tool trace ({turn.trace.length} call{turn.trace.length === 1 ? '' : 's'})
               </summary>

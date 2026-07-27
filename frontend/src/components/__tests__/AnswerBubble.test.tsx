@@ -52,6 +52,18 @@ describe('AnswerBubble', () => {
     expect(items[1]).toHaveTextContent('found 2 chunks')
   })
 
+  it('expands the tool trace by default, so multi-step agent behavior is visible without a click', () => {
+    const turn: Turn = {
+      ...BASE_TURN,
+      answer: 'Answer text',
+      trace: [{ tool_name: 'search_documents', input: { query: 'q' }, result_summary: 'found 1 chunk' }],
+    }
+    render(<AnswerBubble turn={turn} />)
+
+    const details = screen.getByText(/Tool trace/).closest('details')
+    expect(details).toHaveAttribute('open')
+  })
+
   it('renders no trace or sources sections when the answer has neither', () => {
     render(<AnswerBubble turn={{ ...BASE_TURN, answer: 'Simple answer, no citations needed.' }} />)
     expect(screen.queryByText(/Tool trace/)).not.toBeInTheDocument()

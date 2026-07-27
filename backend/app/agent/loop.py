@@ -1,7 +1,8 @@
 """
-@spec AGT-LOOP-001, AGT-LOOP-002, AGT-LOOP-003, AGT-TRACE-001
+@spec AGT-LOOP-001, AGT-LOOP-002, AGT-LOOP-003, AGT-TRACE-001, AGT-CLEAN-001
 """
 import logging
+import re
 from dataclasses import dataclass
 from typing import Any
 
@@ -12,6 +13,16 @@ from app.agent.tools import TOOL_SPECS
 from app.retrieval.search import RetrievalPort
 
 logger = logging.getLogger(__name__)
+
+_THINKING_BLOCK_RE = re.compile(r"<thinking>.*?</thinking>", re.DOTALL | re.IGNORECASE)
+
+
+def _strip_thinking_blocks(text: str) -> str:
+    """@spec AGT-CLEAN-001 — some Bedrock models (observed with Nova Micro)
+    emit their internal reasoning as a literal <thinking>...</thinking>
+    block ahead of the actual answer. That's not something a reader should
+    ever see; strip it before it reaches the client."""
+    return _THINKING_BLOCK_RE.sub("", text).strip()
 
 
 @dataclass(frozen=True)
@@ -143,7 +154,7 @@ class AgentLoop:
     def _finalize(
         self, raw_text: str, known_chunks: dict[str, ChunkRef], trace: list[ToolCallTrace]
     ) -> AgentAnswer:
-        resolution = resolve_citations(raw_text, known_chunks)
+        resolution = resolve_citations(_strip_thinking_blocks(raw_text), known_chunks)
         if resolution.dropped_chunk_ids:
             logger.warning(
                 "citation integrity violation: model cited unknown chunk_id(s) %s",

@@ -33,11 +33,30 @@ describe('DocumentPanel', () => {
 
     await userEvent.upload(input, file)
 
-    expect(onUpload).toHaveBeenCalledWith(file)
+    expect(onUpload).toHaveBeenCalledWith([file])
+  })
+
+  it('calls onUpload with all files when multiple are selected at once', async () => {
+    const onUpload = vi.fn()
+    render(<DocumentPanel documents={[]} uploading={false} onUpload={onUpload} />)
+
+    const fileA = new File(['a'], 'a.txt', { type: 'text/plain' })
+    const fileB = new File(['b'], 'b.txt', { type: 'text/plain' })
+    const input = screen.getByTestId('document-upload-input') as HTMLInputElement
+
+    await userEvent.upload(input, [fileA, fileB])
+
+    expect(onUpload).toHaveBeenCalledWith([fileA, fileB])
+  })
+
+  it('accepts multiple files in a single selection', () => {
+    render(<DocumentPanel documents={[]} uploading={false} onUpload={vi.fn()} />)
+    const input = screen.getByTestId('document-upload-input') as HTMLInputElement
+    expect(input).toHaveAttribute('multiple')
   })
 
   it('disables the upload button while uploading', () => {
     render(<DocumentPanel documents={[]} uploading={true} onUpload={vi.fn()} />)
-    expect(screen.getByRole('button', { name: /upload document/i })).toBeDisabled()
+    expect(screen.getByRole('button', { name: /upload documents/i })).toBeDisabled()
   })
 })
