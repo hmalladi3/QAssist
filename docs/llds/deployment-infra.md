@@ -44,6 +44,10 @@ A single SQL migration (`backend/migrations/001_init.sql`) creates the `pgvector
 
 Render's free tier sleeps a web service after ~15 minutes of inactivity, causing a slow cold-start on the next request — bad for a recruiter's first impression. A lightweight external pinger (reusing the CreditScope pattern: a GitHub Actions scheduled workflow hitting `GET /health` every 10 minutes) keeps the backend warm during expected demo hours.
 
+## Connection Pool Health
+
+Neon's free tier can close idle server-side Postgres connections independently of the backend's own connection pool, which otherwise hands out a dead connection on the next request and fails with a bare `psycopg.Error` — this showed up live as `/health` reporting `db: false` even though Neon itself was reachable and responsive when checked directly. `app.db.create_pool` sets `check=ConnectionPool.check_connection` (validates and transparently reconnects before handing out a connection) and a 120s `max_idle` (recycles connections before Neon's own idle timeout is likely to fire). This is a Neon-pool concern specifically, not a Render one — Render doesn't sleep the process mid-request.
+
 ## CI
 
 GitHub Actions workflow on every push/PR:
