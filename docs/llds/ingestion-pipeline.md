@@ -80,6 +80,10 @@ An IVFFlat (or HNSW, if the installed pgvector version supports it) cosine-dista
 1. OCR support for scanned PDFs — out of scope for this project; would require an OCR dependency and different failure modes.
 2. Re-ingestion / document versioning (what happens when the same filename is uploaded twice) — current behavior is to always create a new `documents` row; de-duplication is not needed at demo scale.
 
+## Demo Corpus Seeding
+
+`backend/seed_corpus/` holds two original documents (a vendor service agreement and a support/data policy) written to support the example questions in [Frontend Chat UI](frontend-chat-ui.md) — including one whose answer genuinely spans both documents, and one that requires knowing the corpus inventory. `backend/scripts/seed_demo_corpus.py` uploads them through the same `POST /documents` path a user would use, idempotently (skips a filename already present), so the deployed app always has grounded answers ready without a manual upload step.
+
 ## References
 
 - [High-Level Design](../high-level-design.md) — System Design section for how ingestion fits the overall flow.

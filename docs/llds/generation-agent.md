@@ -62,13 +62,19 @@ The system prompt instructs Claude to:
 2. Cite every factual claim with a marker `[chunk:<chunk_id>]` immediately after the claim.
 3. Explicitly say "the documents don't contain enough information to answer this" when retrieval doesn't support an answer, rather than guessing.
 4. Prefer a second, refined `search_documents` call over answering from a weak first result set.
+5. Respond with the final answer only — no `<thinking>` block or other exposed reasoning.
+
+## Answer Cleanup
+
+Some Bedrock models (observed with Amazon Nova Micro) don't reliably follow instruction 5 above and emit their internal reasoning as a literal `<thinking>...</thinking>` block ahead of the actual answer. This is stripped from the raw model output before citation-marker parsing — a reader should never see a model's scratch reasoning, and leaving it in would look broken regardless of whether the underlying answer is correct.
 
 ## Citation Resolution
 
-- Claude's raw answer contains inline `[chunk:<uuid>]` markers.
+- Claude's raw answer (after the thinking-block strip above) contains inline `[chunk:<uuid>]` markers — or occasionally a bare `[<uuid>]` without the `chunk:` prefix (also observed with Nova Micro not following the format instruction exactly); both forms are accepted, since the safety property below doesn't depend on the marker format.
 - The agent loop maintains a map of every `chunk_id` seen across all tool results in the conversation (id → {filename, page_number, content excerpt}).
-- Before returning to the API layer, every `[chunk:<uuid>]` marker is resolved against that map into a `Citation {marker_index, chunk_id, filename, page_number, excerpt}`; a marker referencing an unknown `chunk_id` (Claude citing something it was never shown) is dropped and logged as a citation integrity violation — **it must never be silently rendered as if valid**, since a fabricated citation is the explicit falsification condition in the [High-Level Design](../high-level-design.md#success-metrics).
+- Before returning to the API layer, every marker is resolved against that map into a `Citation {marker_index, chunk_id, filename, page_number, excerpt}`; a marker referencing an unknown `chunk_id` (Claude citing something it was never shown) is dropped and logged as a citation integrity violation — **it must never be silently rendered as if valid**, since a fabricated citation is the explicit falsification condition in the [High-Level Design](../high-level-design.md#success-metrics).
 - The frontend receives the answer text with markers replaced by numbered footnote references, plus the resolved citation list.
+- **Excerpt precision**: the excerpt shown is the first ~200 characters of the *chunk*, not a snippet centered on the cited claim. This is only trustworthy if chunks are small enough that the excerpt actually overlaps with what was cited — see [Ingestion Pipeline](ingestion-pipeline.md)'s chunk size decision, tuned down from 1200 to 500 characters specifically because it wasn't.
 
 ## Decisions & Alternatives
 

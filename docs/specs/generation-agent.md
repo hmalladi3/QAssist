@@ -11,8 +11,9 @@ Segment owner: [../llds/generation-agent.md](../llds/generation-agent.md)
 
 ## Citations
 
-- [x] **AGT-CITE-001**: The system shall resolve every `[chunk:<chunk_id>]` marker in Claude's answer text to a `Citation` containing filename, page number, and excerpt.
-- [x] **AGT-CITE-002**: If an answer contains a `[chunk:<chunk_id>]` marker referencing a chunk_id never returned by a tool call within that question's conversation, then the system shall drop that citation and log a citation integrity violation, and shall never render it as a valid citation.
+- [x] **AGT-CITE-001**: The system shall resolve every `[chunk:<chunk_id>]` marker (or a bare `[<chunk_id>]` marker) in Claude's answer text to a `Citation` containing filename, page number, and excerpt.
+- [x] **AGT-CITE-002**: If an answer contains a citation marker referencing a chunk_id never returned by a tool call within that question's conversation, then the system shall drop that citation and log a citation integrity violation, and shall never render it as a valid citation.
+- [x] **AGT-CLEAN-001**: If the model's raw response includes a `<thinking>...</thinking>` block, then the system shall strip it from the answer text before citation-marker resolution and before returning the answer to the client.
 
 ## Grounding & Trace
 

@@ -102,8 +102,8 @@ Alternatives considered: running the backend on AWS (Lambda, ECS, EC2) to keep e
 
 ## Success Metrics
 
-- A recruiter can upload a sample PDF, ask a grounded question, and get a correct answer with a valid citation within ~10 seconds, on the first try, with no setup on their end.
-- At least one demo question triggers a visibly multi-step tool-use trace (e.g., an initial search followed by a refined second search, or a `list_documents` call before answering a corpus-level question).
+- A recruiter can land on the deployed app, click a pre-written example question with no upload or setup on their end, and get a correct answer with a valid citation within ~10 seconds. Upload is a real feature the recruiter can also try, but the demo does not require it — the first grounded, cited answer must be one click away, not gated behind finding and uploading a document.
+- At least one demo question — chosen and verified in advance, not left to chance — reliably triggers a visibly multi-step tool-use trace (e.g., `list_documents` followed by a scoped `search_documents` call, or an initial search followed by a refined second search), and that trace is shown expanded by default so it can't be missed.
 - Automated tests cover chunking, retrieval ranking, citation resolution, and the tool-use routing logic; CI is green on `main`.
 - **Falsification signals** (conditions under which the project should be judged broken): an answer is presented with a citation that does not correspond to real retrieved text (a fabricated citation); the agent never calls a tool even when the question requires document lookup; the deployed demo is unreachable or costs materially exceed the ~$3 budget.
 
