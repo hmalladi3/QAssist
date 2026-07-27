@@ -23,8 +23,8 @@ Upload (bytes + filename)
 ## Chunking Strategy
 
 - **Unit**: characters, not tokens — simpler, avoids a tokenizer dependency, and Titan/Claude context limits are far above what a single document needs here.
-- **Chunk size**: 1200 characters.
-- **Overlap**: 200 characters (~17%) — enough that a sentence split across a chunk boundary is still fully present in at least one chunk.
+- **Chunk size**: 500 characters.
+- **Overlap**: 100 characters (~20%) — enough that a sentence split across a chunk boundary is still fully present in at least one chunk.
 - **PDF page boundaries are respected**: chunks never span two PDF pages, so every chunk has exactly one page number. A page shorter than one chunk becomes a single chunk; a long page is split into multiple overlapping chunks.
 - Each chunk stores: `document_id`, `chunk_index` (sequential within document), `page_number` (nullable for non-PDF), `char_start`, `char_end` (offsets within the page/file text), `content` (the chunk text), `embedding` (vector).
 
@@ -65,7 +65,7 @@ An IVFFlat (or HNSW, if the installed pgvector version supports it) cosine-dista
 | Decision | Chosen | Alternatives Considered | Rationale |
 |----------|--------|------------------------|-----------|
 | Chunk boundary strategy | Fixed-size character chunks, page-respecting for PDF | Semantic/structure-aware chunking (by heading/paragraph) | Simpler, still supports accurate citation via stored offsets; structure-aware chunking is a swappable upgrade behind the same interface later |
-| Chunk size/overlap | 1200 chars / 200 overlap | Token-based sizing with a tokenizer | Avoids adding a tokenizer dependency; character counts are a good enough proxy for a demo-scale corpus |
+| Chunk size/overlap | 500 chars / 100 overlap | Token-based sizing with a tokenizer; a larger 1200-char chunk (tried first) | Avoids adding a tokenizer dependency. 1200 chars was tried first but was large enough that a citation's shown excerpt (first ~200 chars of the chunk) often didn't contain the specific sentence the model actually cited — the underlying chunk *did* support the claim, but the excerpt looked disconnected from it, which undercuts the "checkable" citation story even though nothing was fabricated. 500 chars keeps most single-section/paragraph content in one chunk, so the excerpt shown reliably corresponds to the claim. |
 | Embedding provider | Bedrock Titan Embed Text v2 | Local sentence-transformers (free, no network) | Demonstrates Bedrock breadth (embeddings + generation both on Bedrock) at negligible cost for this corpus size |
 | Storage | Postgres + pgvector (Neon) | A dedicated vector DB (Pinecone, Weaviate) | Free tier available (Neon), one database for both relational metadata and vectors, simplest ops story |
 | PDF parsing | `pypdf` (pure Python, per-page text extraction) | `unstructured`, `pdfplumber` | Lightweight dependency, sufficient for text-based PDFs which is the only supported case |

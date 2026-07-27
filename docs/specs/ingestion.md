@@ -10,7 +10,7 @@ Segment owner: [../llds/ingestion-pipeline.md](../llds/ingestion-pipeline.md)
 
 ## Chunking
 
-- [x] **ING-CHUNK-001**: When chunking a page's (PDF) or file's (plain text/markdown) text, the system shall split it into overlapping chunks of 1200 characters with 200 characters of overlap.
+- [x] **ING-CHUNK-001**: When chunking a page's (PDF) or file's (plain text/markdown) text, the system shall split it into overlapping chunks of 500 characters with 100 characters of overlap.
 - [x] **ING-CHUNK-002**: The system shall ensure no chunk spans two PDF pages.
 - [x] **ING-CHUNK-003**: The system shall record `char_start` and `char_end` offsets for every chunk, relative to its source page (PDF) or file (plain text/markdown) text.
 

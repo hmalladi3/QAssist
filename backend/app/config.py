@@ -24,8 +24,8 @@ class Settings(BaseSettings):
     frontend_origin: str = "http://localhost:5173"
 
     max_upload_bytes: int = 10 * 1024 * 1024
-    chunk_size_chars: int = 1200
-    chunk_overlap_chars: int = 200
+    chunk_size_chars: int = 500
+    chunk_overlap_chars: int = 100
     default_top_k: int = 5
     max_tool_use_rounds: int = 4
 

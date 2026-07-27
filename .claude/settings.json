@@ -1,0 +1,22 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm test)",
+      "Bash(.venv/bin/ruff check app tests)",
+      "Bash(npm run build)",
+      "Bash(.venv/bin/mypy app)",
+      "Bash(aws bedrock help)",
+      "Bash(aws ce get-cost-and-usage *)",
+      "Bash(npm run lint)",
+      "Bash(npm run typecheck)",
+      "Bash(aws bedrock list-foundation-models *)",
+      "Bash(aws bedrock list-foundation-model-agreement-offers *)",
+      "Bash(aws budgets describe-budget *)",
+      "Bash(aws budgets describe-budgets *)",
+      "mcp__claude-in-chrome__read_network_requests",
+      "mcp__claude-in-chrome__read_console_messages",
+      "mcp__claude-in-chrome__tabs_context_mcp",
+      "mcp__claude-in-chrome__find"
+    ]
+  }
+}
